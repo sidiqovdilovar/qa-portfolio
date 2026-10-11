@@ -1,0 +1,338 @@
+{
+  "info": {
+    "name": "QA Portfolio — JSONPlaceholder API",
+    "description": "API testing practice collection: 9 requests (GET/POST/PUT/PATCH/DELETE) with automated assertions: status codes, response bodies, required fields, data filters and response time. Author: Sidiqov Dilovar.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://jsonplaceholder.typicode.com"
+    }
+  ],
+  "item": [
+    {
+      "name": "01. GET /posts — list of posts",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/posts",
+          "host": ["{{baseUrl}}"],
+          "path": ["posts"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Returns exactly 100 posts', function () {",
+              "    pm.expect(pm.response.json().length).to.eql(100);",
+              "});",
+              "pm.test('Every post has id, title, userId', function () {",
+              "    pm.response.json().forEach(function (post) {",
+              "        pm.expect(post).to.have.property('id');",
+              "        pm.expect(post).to.have.property('title');",
+              "        pm.expect(post).to.have.property('userId');",
+              "    });",
+              "});",
+              "pm.test('Response time is less than 800ms', function () {",
+              "    pm.expect(pm.response.responseTime).to.be.below(800);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02. GET /posts/1 — single post",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/posts/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["posts", "1"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('id of returned post is 1', function () {",
+              "    pm.expect(pm.response.json().id).to.eql(1);",
+              "});",
+              "pm.test('Content-Type is application/json', function () {",
+              "    pm.response.to.have.header('Content-Type');",
+              "    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03. GET /posts?userId=1 — filter by user",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/posts?userId=1",
+          "host": ["{{baseUrl}}"],
+          "path": ["posts"],
+          "query": [
+            {
+              "key": "userId",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('All returned posts belong to userId 1', function () {",
+              "    pm.response.json().forEach(function (post) {",
+              "        pm.expect(post.userId).to.eql(1);",
+              "    });",
+              "});",
+              "pm.test('User 1 has exactly 10 posts', function () {",
+              "    pm.expect(pm.response.json().length).to.eql(10);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04. GET /posts/1/comments — comments of a post",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/posts/1/comments",
+          "host": ["{{baseUrl}}"],
+          "path": ["posts", "1", "comments"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Every comment belongs to post 1 and has an email', function () {",
+              "    pm.response.json().forEach(function (comment) {",
+              "        pm.expect(comment.postId).to.eql(1);",
+              "        pm.expect(comment).to.have.property('email');",
+              "        pm.expect(comment.email).to.include('@');",
+              "    });",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05. GET /users/1 — user profile structure",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/users/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["users", "1"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('User has nested address and company objects', function () {",
+              "    var user = pm.response.json();",
+              "    pm.expect(user).to.have.property('address');",
+              "    pm.expect(user.address).to.have.property('city');",
+              "    pm.expect(user).to.have.property('company');",
+              "    pm.expect(user.company).to.have.property('name');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06. POST /posts — create a post",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"QA portfolio test post\",\n  \"body\": \"Created by Postman collection\",\n  \"userId\": 1\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/posts",
+          "host": ["{{baseUrl}}"],
+          "path": ["posts"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 201 Created', function () {",
+              "    pm.response.to.have.status(201);",
+              "});",
+              "pm.test('Server returns a new id for the created post', function () {",
+              "    pm.expect(pm.response.json()).to.have.property('id');",
+              "    pm.expect(pm.response.json().id).to.be.a('number');",
+              "});",
+              "pm.test('Title is echoed back unchanged', function () {",
+              "    pm.expect(pm.response.json().title).to.eql('QA portfolio test post');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07. PUT /posts/1 — full update",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"id\": 1,\n  \"title\": \"Updated title (PUT)\",\n  \"body\": \"Updated body\",\n  \"userId\": 1\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/posts/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["posts", "1"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Title is updated', function () {",
+              "    pm.expect(pm.response.json().title).to.eql('Updated title (PUT)');",
+              "});",
+              "pm.test('id remains 1', function () {",
+              "    pm.expect(pm.response.json().id).to.eql(1);",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08. PATCH /posts/1 — partial update",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Patched title\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/posts/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["posts", "1"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Only title is changed, other fields intact', function () {",
+              "    var post = pm.response.json();",
+              "    pm.expect(post.title).to.eql('Patched title');",
+              "    pm.expect(post).to.have.property('userId');",
+              "    pm.expect(post).to.have.property('body');",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09. DELETE /posts/1 — delete a post",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/posts/1",
+          "host": ["{{baseUrl}}"],
+          "path": ["posts", "1"]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Status code is 200 or 204', function () {",
+              "    pm.expect(pm.response.code).to.be.oneOf([200, 204]);",
+              "});",
+              "pm.test('Response body is empty object or empty', function () {",
+              "    var body = pm.response.text();",
+              "    pm.expect(body === '' || body === '{}' || Object.keys(pm.response.json() || {}).length === 0).to.be.true;",
+              "});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
