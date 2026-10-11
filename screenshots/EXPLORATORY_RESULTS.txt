@@ -1,0 +1,7 @@
+INFO | problem_user checkout inputs -> first='Ivanov' last='' postal='12345'
+BUG  | BUG-07 подтверждён: поле Last Name не принимает ввод (ввод в First Name дублируется/не сохраняется). first='Ivanov' last=''
+INFO | problem_user product page: https://www.saucedemo.com/inventory-item.html?id=5
+INFO | problem_user: кнопок 'Add to cart' на странице = 0, значок корзины после клика = 1
+INFO | console errors на основном флоу: 0
+PASS | Консольных ошибок на основном флоу нет.
+INFO | логин с 200-символьными данными: ошибка показана = True
