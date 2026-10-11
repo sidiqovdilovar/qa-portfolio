@@ -1,0 +1,7 @@
+INFO | problem_user кнопки: [(0, 'Add to cart', 'Remove'), (1, 'Add to cart', 'Remove'), (2, 'Add to cart', 'Add to cart'), (3, 'Add to cart', 'Add to cart'), (4, 'Add to cart', 'Remove'), (5, 'Add to cart', 'Add to cart')] | значок корзины: 3
+INFO | problem_user: в корзине реально 3 товаров после 6 кликов
+BUG  | BUG-08 подтверждён: после клика «Add to cart» на 6 товарах в корзине только 3 — часть кнопок не работает.
+INFO | problem_user страница товара: картинка загрузилась = True
+INFO | problem_user сортировки: {'za': ['Sauce Labs Backpack', 'Sauce Labs Bike Light', 'Sauce Labs Bolt T-Shirt'], 'lohi': ['Sauce Labs Backpack', 'Sauce Labs Bike Light', 'Sauce Labs Bolt T-Shirt'], 'hilo': ['Sauce Labs Backpack', 'Sauce Labs Bike Light', 'Sauce Labs Bolt T-Shirt']}
+BUG  | BUG-10 подтверждён: сортировки 'Z to A' и 'Price low to high' дают одинаковый порядок (все сортировки не работают).
+INFO | standard_user: после перезагрузки значок корзины = 1
