@@ -1,0 +1,30 @@
+API TEST RUN — JSONPlaceholder (https://jsonplaceholder.typicode.com)
+9 requests / 24 assertions — same checks as the Postman collection
+Date: 2026-10-11
+======================================================================
+PASS | GET /posts -> 200 | 47ms
+PASS | GET /posts -> 100 items | count=100
+PASS | GET /posts -> all items have id/title/userId
+PASS | GET /posts -> response time < 800ms | 47ms
+PASS | GET /posts/1 -> 200 | 45ms
+PASS | GET /posts/1 -> id == 1
+PASS | GET /posts?userId=1 -> 200
+PASS | GET /posts?userId=1 -> only user 1
+PASS | GET /posts?userId=1 -> exactly 10 posts | count=10
+PASS | GET /posts/1/comments -> 200
+PASS | GET /posts/1/comments -> postId=1 and email present | count=5
+PASS | GET /users/1 -> 200
+PASS | GET /users/1 -> nested address.city and company.name
+PASS | POST /posts -> 201 Created | status=201
+PASS | POST /posts -> new id returned | id=101
+PASS | POST /posts -> title echoed
+FAIL | POST /posts with empty body -> expected 400 (validation) | actual status=201 -> no server-side validation
+PASS | PUT /posts/1 -> 200
+PASS | PUT /posts/1 -> title updated
+PASS | PUT /posts/1 -> id stays 1
+PASS | PATCH /posts/1 -> 200
+PASS | PATCH /posts/1 -> only title changed
+PASS | DELETE /posts/1 -> 200 or 204 | status=200
+PASS | GET /posts/101 after POST -> 404 (mock API, documented) | status=404
+
+TOTAL: passed=23, failed=1, total=24
