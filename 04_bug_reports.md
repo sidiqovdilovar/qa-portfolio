@@ -1,52 +1,61 @@
 # Bug Reports — saucedemo.com
 
-> ⚠️ Это **примеры правильного формата**. Прогони тесты и замени/дополни описания **своими** находками: только то, что реально воспроизводится. Минимум для портфолио — 6–10 баг-репортов.
+**All defects below were reproduced live** with browser automation (Chromium, Playwright) on **2026-10-11**.
+Each report has a screenshot in [`screenshots/`](screenshots/) and a raw verification log in
+[`screenshots/VERIFICATION_RESULTS.txt`](screenshots/VERIFICATION_RESULTS.txt).
 
-**Environment for all reports:** [Windows 11, Chrome 1XX, 1920×1080] · tested [date]
+**Environment:** Chromium 153 (Playwright) · viewport 1440×900 · tested 2026-10-11
 
----
+**Summary:** 4 defects confirmed · 3 previously suspected issues did **not** reproduce on retest (documented below)
 
-## How to write a good bug title
-
-`[Module] Short symptom when action (conditions)` → e.g. *"Checkout: 'Finish' button double click creates two orders"*
-
-## Severity vs Priority
-
-| | Description |
-|---|---|
-| **Severity** (impact on the system) | Critical / High / Medium / Low |
-| **Priority** (order to fix) | P1 (urgent) / P2 / P3 / P4 (minor) |
+| ID | Title | Module | Severity | Priority | Status |
+|---|---|---|---|---|---|
+| BUG-01 | Product images are not displayed in the catalogue | Catalog | High | P1 | Confirmed |
+| BUG-02 | Sorting options have no effect on product order | Catalog | Medium | P2 | Confirmed |
+| BUG-03 | Checkout: "Last Name" field does not accept input | Checkout | Critical | P1 | Confirmed |
+| BUG-04 | "Add to cart" works for only 3 of 6 products | Cart | High | P1 | Confirmed |
 
 ---
 
-## BUG-01 — Checkout: "Finish" button does not respond on first click
+## BUG-01 — All products show the same 404 placeholder image instead of their own photos
 
 | Field | Value |
 |---|---|
 | ID | BUG-01 |
-| Module | Checkout |
+| Module | Catalog |
 | Severity | High |
 | Priority | P1 |
-| Related test case | TC-09 |
-| Reproducibility | 100% (5/5) |
-| Environment | Windows 11, Chrome [ver], desktop |
+| Reproducibility | 100% (6/6 products) |
+| Account | `problem_user` / `secret_sauce` |
+| Test case | TC-19 (product images load) |
+| Evidence | [`screenshots/bug-01_product-images-missing.png`](screenshots/bug-01_product-images-missing.png) |
 
 **Steps to reproduce:**
-1. Log in as `standard_user` / `secret_sauce`
-2. Add any product to cart
-3. Open cart → Checkout
-4. Fill First Name, Last Name, Postal Code → Continue
-5. Click "Finish" once
+1. Open https://www.saucedemo.com and log in as `problem_user`
+2. Inspect the product images in the catalogue (DevTools → Elements, or the automated check below)
 
-**Expected result:** order is placed, page shows "Thank you for your order!"
+**Expected result:** each product shows its own photo, matching the product name
+(as it does for `standard_user`).
 
-**Actual result:** nothing happens on the first click; the order is placed only on the second click.
+**Actual result:** every one of the 6 products points to the same file —
+`/assets/sl-404-Cq1a9k9X.jpg` — a **404 placeholder**, so the catalogue displays the identical
+generic image six times instead of the real product photos.
 
-**Additional info:** console shows no error; see `screenshots/bug-01_finish-button.png`.
+**Verification (automated):**
+
+| Account | Unique image sources | Example `src` |
+|---|---|---|
+| `problem_user` | **1** (used 6 times) | `/assets/sl-404-Cq1a9k9X.jpg` |
+| `standard_user` | 6 (correct) | `/assets/sauce-backpack-1200x1500-….jpg`, `/assets/bike-light-1200x1500-….jpg`, … |
+
+The image itself loads (600×546 px) — so this is **not** a broken link but a wrong asset:
+the application serves a placeholder file for every product.
+
+**Impact:** users cannot visually identify products — directly affects purchase decisions.
 
 ---
 
-## BUG-02 — Product images mismatch product names in catalog
+## BUG-02 — Sorting options have no effect on product order
 
 | Field | Value |
 |---|---|
@@ -54,95 +63,124 @@
 | Module | Catalog |
 | Severity | Medium |
 | Priority | P2 |
-| Related test case | TC-12 |
-| Reproducibility | 100% (10/10 products) |
+| Reproducibility | 100% (4/4 sort options) |
+| Account | `problem_user` / `secret_sauce` |
+| Test case | TC-11 (sorting by price) |
+| Evidence | [`screenshots/bug-02_sorting-not-working.png`](screenshots/bug-02_sorting-not-working.png) |
 
-**Steps:** log in as `problem_user` → open product list → compare each image with the product name.
+**Steps to reproduce:**
+1. Log in as `problem_user`
+2. Select any option in the sort dropdown: **Name (Z to A)**, **Price (low to high)**, **Price (high to low)**
 
-**Expected:** each product shows its own correct image.
-**Actual:** all products show the same placeholder image; image does not match the product.
+**Expected result:** the product list re-orders according to the selected option.
 
-**Impact:** users may order the wrong item — affects purchasing decisions.
+**Actual result:** the order never changes. Captured prices after selecting "Price (low to high)":
+
+```
+29.99, 9.99, 15.99, 49.99, 7.99, 15.99   ← not ascending
+```
+
+All four options return the identical default order — sorting is effectively non-functional.
+
+**Impact:** users cannot find products by price or name — a core e-commerce function is broken.
 
 ---
 
-## BUG-03 — Sorting does not work for "Price (low to high)"
+## BUG-03 — Checkout: "Last Name" field does not accept input
 
 | Field | Value |
 |---|---|
 | ID | BUG-03 |
-| Module | Catalog |
-| Severity | Medium |
-| Priority | P2 |
-| Related test case | TC-11 |
+| Module | Checkout |
+| Severity | Critical |
+| Priority | P1 |
+| Reproducibility | 100% (3/3 attempts) |
+| Account | `problem_user` / `secret_sauce` |
+| Test case | TC-09 (checkout end-to-end) |
+| Evidence | [`screenshots/bug-03_checkout-lastname-field.png`](screenshots/bug-03_checkout-lastname-field.png) |
 
-**Steps:** log in as `problem_user` → select "Price (low to high)" in the sort dropdown.
+**Steps to reproduce:**
+1. Log in as `problem_user`, add any product to the cart
+2. Go to cart → **Checkout**
+3. Enter `Ivan` in First Name, `Ivanov` in Last Name, `12345` in Postal Code
+4. Read the field values back
 
-**Expected:** products are sorted ascending by price.
-**Actual:** order does not change; sorting has no effect.
+**Expected result:** First Name = `Ivan`, Last Name = `Ivanov`.
+
+**Actual result:** the Last Name field stays empty, and the value typed into it is written into
+First Name instead:
+
+```
+first = 'Ivanov', last = '', postal = '12345'
+```
+
+**Impact:** the user cannot enter a last name at all — the order cannot be completed correctly.
+This is the most severe defect of the run: it blocks the purchase funnel.
 
 ---
 
-## BUG-04 — No validation error when Postal Code field is empty
+## BUG-04 — "Add to cart" works for only 3 of 6 products
 
 | Field | Value |
 |---|---|
 | ID | BUG-04 |
-| Module | Checkout |
-| Severity | Medium |
-| Priority | P2 |
-| Related test case | TC-10 |
+| Module | Cart |
+| Severity | High |
+| Priority | P1 |
+| Reproducibility | 100% (verified product by product) |
+| Account | `problem_user` / `secret_sauce` |
+| Test case | TC-06 (add product to cart) |
+| Evidence | [`screenshots/bug-04_add-to-cart-buttons.png`](screenshots/bug-04_add-to-cart-buttons.png) |
 
-**Steps:** complete checkout with empty Postal Code, click "Continue".
+**Steps to reproduce:**
+1. Log in as `problem_user`
+2. Click **Add to cart** on each of the 6 products in turn
+3. Open the cart
 
-**Expected:** error "Postal Code is required", checkout is not continued.
-**Actual:** [describe what really happens — fill after your own run].
+**Expected result:** 6 clicks → 6 items in the cart, counter shows `6`.
 
----
+**Actual result:** after clicking all 6 buttons the counter shows `3` and the cart contains
+3 items. Buttons for products #3, #4 and #6 do not react — the button label does not change
+from "Add to cart" to "Remove":
 
-## BUG-05 — Search accepts empty query and returns all products
+| Product index | Before click | After click |
+|---|---|---|
+| 1 | Add to cart | Remove ✅ |
+| 2 | Add to cart | Remove ✅ |
+| 3 | Add to cart | **Add to cart** ❌ |
+| 4 | Add to cart | **Add to cart** ❌ |
+| 5 | Add to cart | Remove ✅ |
+| 6 | Add to cart | **Add to cart** ❌ |
 
-| Field | Value |
-|---|---|
-| ID | BUG-05 |
-| Module | Search |
-| Severity | Low |
-| Priority | P3 |
-
-**Steps:** on the product list, enter a single space in search and confirm.
-
-**Expected:** search is not executed / shows hint, no results reload.
-**Actual:** [fill after verification].
-
----
-
-## BUG-06 — Page performance: login takes >5 seconds
-
-| Field | Value |
-|---|---|
-| ID | BUG-06 |
-| Module | Authentication |
-| Severity | Low |
-| Priority | P3 |
-
-**Steps:** log in as `performance_glitch_user` and measure time to the product list.
-
-**Expected:** page loads within 2 seconds.
-**Actual:** load takes ~5–6 seconds; page freezes with no loader.
+**Impact:** half of the catalogue cannot be purchased — direct loss of revenue.
 
 ---
 
-## Bug summary table (fill after the run)
+## Retest: issues that did NOT reproduce (documented for completeness)
 
-| ID | Title | Module | Severity | Priority | Status |
-|---|---|---|---|---|---|
-| BUG-01 | | Checkout | High | P1 | Open |
-| BUG-02 | | Catalog | Medium | P2 | Open |
-| BUG-03 | | Catalog | Medium | P2 | Open |
-| BUG-04 | | Checkout | Medium | P2 | Open |
-| BUG-05 | | Search | Low | P3 | Open |
-| BUG-06 | | Auth | Low | P3 | Open |
-| BUG-07 | | | | | |
-| BUG-08 | | | | | |
+A good bug report also records what was checked and **did not** fail — this prevents wasted
+engineering time. These items were suspected, tested on the live build, and closed as
+"cannot reproduce":
 
-**Total:** 8 reports · Critical 0 · High 1 · Medium 3 · Low 2 (+ your own)
+| # | Suspected issue | Account | Result | Evidence |
+|---|---|---|---|---|
+| RT-01 | "Finish" button requires a double click | `standard_user` | ❌ Not reproduced — order completes on the first click | [`retest-03_finish-button-order-completed.png`](screenshots/retest-03_finish-button-order-completed.png) |
+| RT-02 | Empty "Postal Code" is not validated | `standard_user` | ❌ Not reproduced — error shown: *"Error: Postal Code is required"* | [`retest-01_postal-code-validation.png`](screenshots/retest-01_postal-code-validation.png) |
+| RT-03 | Login is slower than 2 seconds | `performance_glitch_user` | ❌ Not reproduced — login took 0.05 s on this run | [`retest-02_slow-login.png`](screenshots/retest-02_slow-login.png) |
+
+**Additional observation (not a defect):** for `standard_user` the cart counter persists after a
+page reload — expected behaviour for a session-based cart, confirmed as working as designed.
+
+---
+
+## How these reports were produced
+
+Every defect was reproduced with an automated Playwright script — the same tool used in
+[`automation/`](automation/). Scripts, logs and screenshots are committed, so any report can be
+re-verified by anyone:
+
+```bash
+pip install -r automation/requirements.txt
+playwright install chromium
+python verify_defects.py   # reproduces all defects and re-captures screenshots
+```
