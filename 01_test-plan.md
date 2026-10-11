@@ -36,7 +36,7 @@ Verify core user flows of the e-commerce web application (registration, login, c
 |---|---|
 | Testing types | Functional, regression, smoke, UI, exploratory, basic API checks (Postman) |
 | Test design techniques | Equivalence partitioning, boundary values, pairwise, state transition |
-| Documentation | Checklist (66 items), test cases (25), bug reports |
+| Documentation | Checklist (76 items), test cases (25), bug reports |
 | Environment | [Windows 11 / macOS], Chrome [version], screen 1920×1080 and mobile 375×812 |
 | Test data | Public demo accounts, e.g. `standard_user` / `secret_sauce` on saucedemo.com |
 
@@ -70,7 +70,7 @@ Verify core user flows of the e-commerce web application (registration, login, c
 
 ## 8. Results summary (fill after the run)
 
-- Checklist items executed: [66] / 66
+- Checklist items executed: [76] / 76
 - Test cases: [25] executed, [__] passed, [__] failed
 - Bugs found: [__] (critical: [__], high: [__], medium: [__], low: [__])
 - Conclusion: [e.g. "Core flows work; checkout has 2 high-severity defects, documented in bug reports."]
