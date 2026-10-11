@@ -2,13 +2,13 @@
 
 Automated UI tests for [saucedemo.com](https://www.saucedemo.com) — a public demo shop built specifically for QA practice.
 
-## What is covered (7 tests)
+## What is covered (10 tests, all passing)
 
 | File | Tests |
 |---|---|
-| `test_login.py` | successful login, locked-out user, wrong password |
+| `test_login.py` | successful login, locked-out user, wrong password, empty-field validation |
 | `test_cart.py` | add 1 item, add 2 items (badge count), remove item |
-| `test_checkout.py` | end-to-end checkout with valid data (order confirmation) |
+| `test_checkout.py` | end-to-end checkout, required-field validation, cancel flow |
 
 ## Stack
 
@@ -46,6 +46,12 @@ pytest -v --headed
 - All locators use stable **IDs/classes** (`#user-name`, `.title`, `[data-test="..."]`) — the same approach as in commercial projects (data-test attributes are the most reliable).
 - Assertions use Playwright's `expect()` with auto-waiting — no `sleep()` hacks.
 - The `page` and `browser` fixtures are defined in `conftest.py`; each test runs in a clean browser context.
+
+## Verified run (2026-10-11)
+
+```
+10 passed in 4.90s  —  Chromium 153, viewport 1280x800
+```
 
 ## Next steps (roadmap)
 
