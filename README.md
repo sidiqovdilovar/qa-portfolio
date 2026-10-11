@@ -57,7 +57,7 @@ knowing which ones to close is the professional part.
 | Artifact | Description |
 |---|---|
 | [Test plan](01_test-plan.md) | Scope, approach, risks, entry/exit criteria |
-| [Checklist (66 items)](02_checklist_webapp.md) | Auth, catalog & search, cart, checkout, profile, UI, cross-browser |
+| [Checklist (76 items)](02_checklist_webapp.md) | Auth, catalog & search, cart, checkout, profile, UI, cross-browser |
 | [Test cases (25)](03_test-cases.md) | 12 detailed + 13 brief cases with steps and expected results |
 | [Bug reports (4 verified + retests)](04_bug_reports.md) | Live-reproduced defects with severity, priority and screenshots |
 | [Screenshots](screenshots/) | Evidence for every defect, plus clean reference captures |
