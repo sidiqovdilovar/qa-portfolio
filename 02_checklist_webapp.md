@@ -105,6 +105,6 @@
 
 ---
 
-**Total: 66 checklist items**
+**Total: 76 checklist items**
 
 Fill in failures with bug IDs from `04_bug_reports.md`, e.g. `[!] 4.11 — BUG-03`.
